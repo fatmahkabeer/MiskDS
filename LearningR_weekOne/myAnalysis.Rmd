@@ -1,0 +1,78 @@
+---
+title: "Chicken weight analysis"
+output: html_document
+author: "Fatmah"
+date: "04/09/2020"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
+library(tidyverse)
+library(DT)
+```
+
+
+```{r }
+# Aljohura's solution
+chickTable <- chickwts %>% 
+  group_by(feed) %>% 
+  summarise(n = length(feed),
+            Average = mean(weight),
+            SD = sd(weight))
+
+datatable(chickTable)
+
+```
+
+## All pair-wise comparisons
+
+
+```{r}
+# Aljohura's solution
+
+#There're two way to get ANOV result and if you want to get a tukey you need to do it this way. 
+chickwts.av <-  aov(weight ~ feed, data = chickwts)
+#insted of the lm() we use aov()
+tukeyTest <- TukeyHSD(chickwts.av)
+
+datatable(tukeyTest$feed)
+```
+
+## Our dataset
+```{r display}
+
+```
+This dataset describe the amount of .....
+
+To get better known of our dataset:
+
+```{r summary}
+str(chickwts)
+summary(chickwts)
+```
+
+
+to get the mean and the SD of the dataset
+
+```{r desc_stats}
+chickwts %>% 
+  group_by(feed) %>% 
+  summarise(n = n(),
+            avg = mean(weight), 
+            sd1 = sd(weight)) %>%
+  knitr::kable()
+```
+
+## Including Plots
+```{r jitter_plot}
+ggplot (chickwts, aes(feed, weight)) +
+  geom_jitter(width = 0.3) +
+  stat_summary(fun.data = mean_sdl, 
+               fun.args = list(mult = 1), 
+               col = "red")
+  
+```
+
+
+
+
