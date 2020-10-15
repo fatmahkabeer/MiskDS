@@ -1,0 +1,183 @@
+---
+title: "HappinessAnalysis"
+author: "Fatmah Kabeer"
+date: "10/11/2020"
+output:
+  html_document:
+    fig_caption: false
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE)
+library(tidyverse)
+library(DT)
+
+```
+<br />
+
+#### _In this document, I analyze a dataset that I have collected from Kaggle. This dataset illustrates the happiness in the world. I mainly focus on my analysis of the year 2019 as well as my country, Saudi Arabia._
+
+```{r readingDate}
+happiness_2015 <- read.csv("archive/2015.csv")
+happiness_2016 <- read.csv("archive/2016.csv")
+happiness_2017 <- read.csv("archive/2017.csv")
+happiness_2018 <- read.csv("archive/2018.csv")
+happiness_2019 <- read.csv("archive/2019.csv")
+```
+<br />
+
+### In 2019
+#### First of all we need to know the comparisons criterias in 2019:
+```{r comparisonsCriteria}
+dropN <- c("Country.or.region", "Overall.rank", "Score")
+criteria <- names(happiness_2019[!(names(happiness_2019)) %in% dropN])
+
+knitr::kable(criteria)
+```
+
+
+#### How many Countries in the evaluating list?
+```{r}
+nrow(happiness_2019)
+```
+<br />
+
+#### What are the top 10 of the happiest countries in 2019?
+```{r}
+happiest <- arrange(happiness_2019, Overall.rank)
+happiest10 <- head(happiest$Country.or.region, 10)
+
+knitr::kable(happiest10)
+```
+<br />
+
+#### The top 10 of the saddest countries in 2019:
+```{r}
+saddest <- arrange(happiness_2019, desc(Overall.rank))
+saddest10 <- head(saddest$Country.or.region, 10)
+knitr::kable(saddest10)
+```
+
+
+#### How freedom affect countries' happiness in 2019?
+
+**Plot to explain the relationship between freedom to make life choices with the level of happiness.**
+As we can see the population in the happiest countries is as showing kind of have a more degree of freedom to make life than others. 
+```{r freedomPlot}
+ggplot(happiness_2019, aes(x = Country.or.region,
+                           y = Overall.rank,
+                           color = Freedom.to.make.life.choices)) +
+  #facet_grid(Country.or.region ~ Social.support) +
+  geom_point()
+```
+<br />
+<br />
+
+#### Comparison between the average Healthy Life Expectancy in the happiest against the saddest countries.
+**The average of the Healthy Life Expectancy for the saddest country in 2019:**
+```{r happinestAvg}
+happiness_2019 %>% 
+  summarise(avg = mean(Healthy.life.expectancy[Overall.rank > (nrow(happiness_2019) - 10)]))
+
+```
+**The average of the Healthy life expectancy for the happiest country in 2019:**
+```{r saddnestAvg}
+happiness_2019 %>% 
+  summarise(avg = mean(Healthy.life.expectancy[Overall.rank > 10]))
+```
+<br />
+
+### Saudi Arabia:
+**Saudi Arabia rank**
+```{r saRank}
+
+saRank <- happiness_2019 %>% 
+  filter(Country.or.region == "Saudi Arabia")
+saRank[1,1]
+
+```
+
+#### Saudis Happiness details in 2019 in comparisons with the happiest country:
+```{r}
+SvsF <- filter(happiness_2019, Country.or.region == "Saudi Arabia" | Overall.rank == 1)%>% 
+  knitr::kable()
+SvsF
+```
+<br />
+
+#### Piesharts to illustrate the comparisons between Saudi Arabia and Finland:
+```{r}
+# In plot
+# Columes to get rid of
+#drop <- c("Country.or.region", "Overall.rank", "Score")
+#lab <- names(SvsF[!(names(SvsF)) %in% drop]) 
+#lab
+
+# Saudi Arabia plot
+#Sa <- filter(SvsF, Country.or.region == "Saudi Arabia", na.rm = TRUE) %>% 
+#  as.double() %>% 
+#  unname()
+
+#Sa <- na.omit(Sa)
+#pie(labels = lab, Sa, main = "Saudi Arabia")
+
+
+# Finland plot
+#Fi <- as.double(unname(filter(SvsF, Overall.rank == 1)), na.rm = TRUE)
+#Fi <- na.omit(Fi)
+#pie(labels = lab, Fi, main = "Finland")
+```
+<br />
+#### How happiness' rank in Saudi Arabia changed over the last five years:
+
+```{r }
+
+sa2015 <- filter(happiness_2015, Country == "Saudi Arabia")
+sa2016 <- filter(happiness_2016, Country == "Saudi Arabia")
+sa2017 <- filter(happiness_2017, Country == "Saudi Arabia")
+sa2018 <- filter(happiness_2018, Country.or.region == "Saudi Arabia")
+sa2019 <- filter(happiness_2019, Country.or.region == "Saudi Arabia")
+
+
+years <- c("2015", "2016", "2017", "2018", "2019")
+happinessRate <- c(sa2015$Happiness.Rank,
+                   sa2016$Happiness.Rank,
+                   sa2017$Happiness.Rank,
+                   sa2018$Overall.rank,
+                   sa2019$Overall.rank)
+
+
+#Plot
+SaHappinessRate <- data.frame(years,happinessRate)
+ggplot(SaHappinessRate, aes(x = years,
+                            y = happinessRate,
+                            fill = years)) +
+   geom_bar(stat="identity")
+```
+
+#### Saudis' happiness details over the last five years:
+**2015**
+```{r}
+knitr::kable(sa2015)
+```
+
+**2016**
+```{r}
+knitr::kable(sa2016)
+```
+
+**2017**
+```{r}
+knitr::kable(sa2017)
+```
+
+**2018**
+```{r}
+knitr::kable(sa2018)
+```
+

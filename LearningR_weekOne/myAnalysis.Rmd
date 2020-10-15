@@ -5,6 +5,8 @@ author: "Fatmah"
 date: "04/09/2020"
 ---
 
+<br />
+_This dataset describe the weight based on the feed._
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE)
 library(tidyverse)
@@ -12,48 +14,23 @@ library(DT)
 ```
 
 
-```{r }
-# Aljohura's solution
-chickTable <- chickwts %>% 
-  group_by(feed) %>% 
-  summarise(n = length(feed),
-            Average = mean(weight),
-            SD = sd(weight))
-
-datatable(chickTable)
-
-```
-
-## All pair-wise comparisons
-
-
-```{r}
-# Aljohura's solution
-
-#There're two way to get ANOV result and if you want to get a tukey you need to do it this way. 
-chickwts.av <-  aov(weight ~ feed, data = chickwts)
-#insted of the lm() we use aov()
-tukeyTest <- TukeyHSD(chickwts.av)
-
-datatable(tukeyTest$feed)
-```
-
-## Our dataset
+## _Our first 10 rows from the dataset:_ 
 ```{r display}
-
+chickwts %>% 
+  head(10) %>% 
+knitr::kable()
 ```
-This dataset describe the amount of .....
 
-To get better known of our dataset:
 
+#### To get better known of our dataset:
 ```{r summary}
 str(chickwts)
 summary(chickwts)
+names(chickwts)
 ```
 
 
-to get the mean and the SD of the dataset
-
+#### To get the mean and the SD of the dataset
 ```{r desc_stats}
 chickwts %>% 
   group_by(feed) %>% 
@@ -69,10 +46,48 @@ ggplot (chickwts, aes(feed, weight)) +
   geom_jitter(width = 0.3) +
   stat_summary(fun.data = mean_sdl, 
                fun.args = list(mult = 1), 
-               col = "red")
+               col = "blue")
   
 ```
 
+#### When weighr less than 170
+```{r}
+chickwts %>%
+  filter(weight < 170) %>%
+  select(feed)%>%
+  knitr::kable()
+```
 
+#### When feed lequail horsebean
+```{r}
+chickwts %>%
+  filter(feed == "horsebean") %>%
+  knitr::kable()
+```
 
+<br />
+<br />
+```{r }
+# Aljohura's solution
+chickTable <- chickwts %>% 
+  group_by(feed) %>% 
+  summarise(n = length(feed),
+            Average = mean(weight),
+            SD = sd(weight))
+
+datatable(chickTable)
+
+```
+
+## All pair-wise comparisons
+```{r}
+# Aljohura's solution
+
+#There're two way to get ANOV result and if you want to get a tukey you need to do it this way. 
+chickwts.av <-  aov(weight ~ feed, data = chickwts)
+#insted of the lm() we use aov()
+tukeyTest <- TukeyHSD(chickwts.av)
+
+datatable(tukeyTest$feed)
+```
 
