@@ -2,11 +2,11 @@ library(tidyverse)
 
 
 
-happiness_2015 <- read.csv("ApplyLearning_WorldHappiness/archive/2015.csv")
-happiness_2016 <- read.csv("ApplyLearning_WorldHappiness/archive/2016.csv")
-happiness_2017 <- read.csv("ApplyLearning_WorldHappiness/archive/2017.csv")
-happiness_2018 <- read.csv("ApplyLearning_WorldHappiness/archive/2018.csv")
-happiness_2019 <- read.csv("ApplyLearning_WorldHappiness/archive/2019.csv")
+happiness_2015 <- read.csv("archive/2015.csv")
+happiness_2016 <- read.csv("archive/2016.csv")
+happiness_2017 <- read.csv("archive/2017.csv")
+happiness_2018 <- read.csv("archive/2018.csv")
+happiness_2019 <- read.csv("archive/2019.csv")
 
 #column names in each dataset
 names(happiness_2015)
@@ -88,23 +88,30 @@ pie(labels = lab, Fi, main = "Finland")
 
 #How happiness' rank in Saudi Arabia changed over the last five years
 sa2015 <- filter(happiness_2015, Country == "Saudi Arabia")
-sa2015
- 
 sa2016 <- filter(happiness_2016, Country == "Saudi Arabia")
-sa2016
-
 sa2017 <- filter(happiness_2017, Country == "Saudi Arabia")
-sa2017
-
 sa2018 <- filter(happiness_2018, Country.or.region == "Saudi Arabia")
-sa2018
-
 sa2019 <- filter(happiness_2019, Country.or.region == "Saudi Arabia")
-sa2019
+
+
+SaHappinessDf <- data.frame(sa2015, sa2016, sa2017, sa2018, sa2019)
+SaHappinessDf 
+
+#aa <- merge(sa2015, sa2016, by = "Country", all = TRUE)
+#aa
+
 
 years <- c("2015", "2016", "2017", "2018", "2019")
 happinessRate <- c(sa2015$Happiness.Rank, sa2016$Happiness.Rank, sa2017$Happiness.Rank, sa2018$Overall.rank, sa2019$Overall.rank)
 
+# Saudis' happiness details over the last five years:
+#SA15 <- select(sa2015, -c(Country, Region))
+#SA16 <- select(sa2016, -c(Country, Region))
+#SA17 <- select(sa2017, -Country)
+#SA18 <- select(sa2018, -Country.or.region)
+#SA19 <- select(sa2019, -Country.or.region)
+
+#SA.df <- data.frame(SA15, SA16, SA17, SA18, SA19)
 
 #Plot
 SaHappinessRate <- data.frame(years,happinessRate)

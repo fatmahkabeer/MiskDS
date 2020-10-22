@@ -14,11 +14,11 @@ library(DT)
 ```
 
 
-## _Our first 10 rows from the dataset:_ 
+#### _Our first 10 rows from the dataset:_ 
 ```{r display}
 chickwts %>% 
   head(10) %>% 
-knitr::kable()
+datatable()
 ```
 
 
@@ -46,23 +46,30 @@ ggplot (chickwts, aes(feed, weight)) +
   geom_jitter(width = 0.3) +
   stat_summary(fun.data = mean_sdl, 
                fun.args = list(mult = 1), 
-               col = "blue")
+               col = "red")
   
 ```
 
 #### When weighr less than 170
-```{r}
+```{r weighr less than 170}
 chickwts %>%
   filter(weight < 170) %>%
   select(feed)%>%
   knitr::kable()
 ```
 
-#### When feed lequail horsebean
-```{r}
+#### When feed equail horsebean
+```{r feed equail horsebean}
 chickwts %>%
   filter(feed == "horsebean") %>%
-  knitr::kable()
+  datatable()
+```
+
+```{r}
+ggplot(chickwts, aes(x = feed == "horsebean",
+                           y = weight)) +
+  #facet_grid(Country.or.region ~ Social.support) +
+  geom_jitter(alpha = 0.3)
 ```
 
 <br />

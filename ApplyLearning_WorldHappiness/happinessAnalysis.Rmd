@@ -4,7 +4,6 @@ author: "Fatmah Kabeer"
 date: "10/11/2020"
 output:
   html_document:
-    fig_caption: false
     toc: true
     toc_float:
       collapsed: false
@@ -16,6 +15,7 @@ output:
 knitr::opts_chunk$set(echo=TRUE)
 library(tidyverse)
 library(DT)
+library(RColorBrewer)
 
 ```
 <br />
@@ -59,9 +59,10 @@ knitr::kable(happiest10)
 #### The top 10 of the saddest countries in 2019:
 ```{r}
 saddest <- arrange(happiness_2019, desc(Overall.rank))
-saddest10 <- head(saddest$Country.or.region, 10)
-knitr::kable(saddest10)
+saddest10 <- head(saddest$Country.or.region, 10) %>% 
+   knitr::kable()
 ```
+
 
 
 #### How freedom affect countries' happiness in 2019?
@@ -94,7 +95,16 @@ happiness_2019 %>%
 
 ### Saudi Arabia:
 **Saudi Arabia rank**
-```{r saRank}
+
+```{r dataset for each year}
+sa2015 <- filter(happiness_2015, Country == "Saudi Arabia")
+sa2016 <- filter(happiness_2016, Country == "Saudi Arabia")
+sa2017 <- filter(happiness_2017, Country == "Saudi Arabia")
+sa2018 <- filter(happiness_2018, Country.or.region == "Saudi Arabia")
+sa2019 <- filter(happiness_2019, Country.or.region == "Saudi Arabia")
+```
+
+```{r Saudi Arabia Rank in 2019}
 
 saRank <- happiness_2019 %>% 
   filter(Country.or.region == "Saudi Arabia")
@@ -102,46 +112,48 @@ saRank[1,1]
 
 ```
 
+
 #### Saudis Happiness details in 2019 in comparisons with the happiest country:
-```{r}
-SvsF <- filter(happiness_2019, Country.or.region == "Saudi Arabia" | Overall.rank == 1)%>% 
-  knitr::kable()
-SvsF
+```{r Saudi Arabia VS Finland}
+SvsF <- filter(happiness_2019, Country.or.region == "Saudi Arabia" | Overall.rank == 1)
+knitr::kable(SvsF)
+
 ```
 <br />
 
 #### Piesharts to illustrate the comparisons between Saudi Arabia and Finland:
-```{r}
+```{r Comparisons Plot, echo = FALSE}
 # In plot
 # Columes to get rid of
-#drop <- c("Country.or.region", "Overall.rank", "Score")
-#lab <- names(SvsF[!(names(SvsF)) %in% drop]) 
-#lab
+drop <- c("Country.or.region", "Overall.rank", "Score")
+lab <- names(SvsF[!(names(SvsF)) %in% drop]) 
 
 # Saudi Arabia plot
-#Sa <- filter(SvsF, Country.or.region == "Saudi Arabia", na.rm = TRUE) %>% 
-#  as.double() %>% 
-#  unname()
-
-#Sa <- na.omit(Sa)
-#pie(labels = lab, Sa, main = "Saudi Arabia")
-
+SvsF <- filter(happiness_2019, Country.or.region == "Saudi Arabia" | Overall.rank == 1)
+Sa <- as.double(unlist(unname(SvsF, happiness_2019$Country.or.region == "Saudi Arabia"))) #%>%
+#  select(-"Score")
+Sa <- na.omit(Sa)
+pie(labels = lab, Sa, main = "Saudi Arabia")
 
 # Finland plot
-#Fi <- as.double(unname(filter(SvsF, Overall.rank == 1)), na.rm = TRUE)
-#Fi <- na.omit(Fi)
-#pie(labels = lab, Fi, main = "Finland")
+#Fin <- as.double(unlist(unname(SvsF, happiness_2019$Overall.rank == 1)))
+#Fin <- na.omit(Fin)
+#pie(labels = lab, Fin, main = "Finland")
 ```
+
+So what we need to improve in order to be in the first place are:
+
+- `r names(SvsF)[7]` by `r SvsF[1,7] - SvsF[2,7]`
+- `r names(SvsF)[4]` by `r SvsF[1,4] - SvsF[2,4]`
+- `r names(SvsF)[5]` by `r SvsF[1,5] - SvsF[2,5]`
+- `r names(SvsF)[6]` by `r SvsF[1,5] - SvsF[2,6]`
+
+
 <br />
+
 #### How happiness' rank in Saudi Arabia changed over the last five years:
 
-```{r }
-
-sa2015 <- filter(happiness_2015, Country == "Saudi Arabia")
-sa2016 <- filter(happiness_2016, Country == "Saudi Arabia")
-sa2017 <- filter(happiness_2017, Country == "Saudi Arabia")
-sa2018 <- filter(happiness_2018, Country.or.region == "Saudi Arabia")
-sa2019 <- filter(happiness_2019, Country.or.region == "Saudi Arabia")
+```{r SA Happiness Rate over last 5 years, echo = FALSE}
 
 
 years <- c("2015", "2016", "2017", "2018", "2019")
@@ -153,31 +165,62 @@ happinessRate <- c(sa2015$Happiness.Rank,
 
 
 #Plot
+#SaHappinessRate <- data.frame(years,happinessRate)
+#ggplot(SaHappinessRate, aes(x = years,
+#                            y = happinessRate)) +
+#   geom_bar(stat="identity", fill = "#8fc0d1")
+
 SaHappinessRate <- data.frame(years,happinessRate)
 ggplot(SaHappinessRate, aes(x = years,
-                            y = happinessRate,
-                            fill = years)) +
-   geom_bar(stat="identity")
+                            y = happinessRate)) +
+   geom_point(color = "#8fc0d1")+
+  theme(panel.grid = element_blank())
+```
+**Relation between Social Support and Ovarall.rank in 2018 and 2019:**
+As it is shown Social Support does not make a huge difference in Saudis' happiness rate in the last two years.
+```{r}
+sociVsRank18 <- select(sa2018, c(Social.support,Overall.rank))
+sociVsRank19 <- data.frame(Social.support = sa2019$Social.support,
+                           Overall.rank = sa2019$Overall.rank)
+
+sociVsRank18_19 <- rbind(sociVsRank18, sociVsRank19) 
+sociVsRank18_19$year <- c("2018", "2019")
+knitr::kable(sociVsRank18_19)
+
 ```
 
-#### Saudis' happiness details over the last five years:
+
+#### Saudis' happiness details over the last two years:
+
+```{r info18_19}
+Sa19 <- data.frame(Overall.rank = sa2019$Overall.rank,
+                       Country.or.region = sa2019$Country.or.region,
+                       Score = sa2019$Score,
+                       GDP.per.capita = sa2019$GDP.per.capita,
+                       Social.support = sa2019$Social.support,
+                       Healthy.life.expectancy = sa2019$Healthy.life.expectancy,
+                       Freedom.to.make.life.choices = sa2019$Healthy.life.expectancy,
+                       Generosity = sa2019$Generosity,
+                       Perceptions.of.corruption = sa2019$Perceptions.of.corruption)
+                       
+                       
+SaHappinessDf18_19 <- rbind(sa2018, Sa19) 
+SaHappinessDf18_19$year <- c("2018", "2019")
+knitr::kable(SaHappinessDf18_19)
+```
+
+#### Old data..
 **2015**
 ```{r}
 knitr::kable(sa2015)
 ```
-
 **2016**
 ```{r}
 knitr::kable(sa2016)
 ```
-
 **2017**
 ```{r}
 knitr::kable(sa2017)
 ```
 
-**2018**
-```{r}
-knitr::kable(sa2018)
-```
 
