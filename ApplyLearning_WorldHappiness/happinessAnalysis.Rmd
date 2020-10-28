@@ -6,7 +6,7 @@ output:
   html_document:
     toc: true
     toc_float:
-      collapsed: false
+      collapsed: true
       smooth_scroll: false
     toc_depth: 4
 ---
@@ -62,7 +62,6 @@ saddest <- arrange(happiness_2019, desc(Overall.rank))
 saddest10 <- head(saddest$Country.or.region, 10) %>% 
    knitr::kable()
 ```
-
 
 
 #### How freedom affect countries' happiness in 2019?
