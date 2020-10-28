@@ -10,20 +10,48 @@ happiness_2019 <- read.csv("archive/2019.csv")
 
 #column names in each dataset
 names(happiness_2015)
-
 names(happiness_2016)
 names(happiness_2017)
-names(happiness_2018)
-names(happiness_2019)
+setdiff(names(happiness_2018), names(happiness_2019))
+
+# Can we combine all together in one data set:
+
 
 
 #Plot to explain the relationship between freedom to make life choices with the level of happiness.
 #How freedom affect countries' happiness in 2019?
-ggplot(happiness_2019, aes(x = Country.or.region,
-                           y = Overall.rank,
-                           color = Freedom.to.make.life.choices)) +
+happiness_2019 <- happiness_2019 %>% 
+  as_tibble() %>% 
+  arrange(-Overall.rank) %>% 
+  mutate(Country.or.region = as_factor(Country.or.region))
+
+happiness_2019$Country.or.region
+
+# The distrbution of the happiness scores
+ggplot(happiness_2019, aes(x = Score,
+                           y = Country.or.region)) +
   #facet_grid(Country.or.region ~ Social.support) +
   geom_point()
+
+# Can we add information about the geo region?
+
+names(happiness_2019)[2] <- "country"
+
+library(gapminder)
+happiness_2019 <- gapminder[c("continent", "country")] %>% 
+  right_join(happiness_2019) %>% 
+  arrange(-Overall.rank) %>% 
+  mutate(country = as_factor(country))
+
+
+ggplot(happiness_2019, aes(x = Score,
+                           y = country)) +
+  geom_point() +
+  facet_grid(continent ~ ., scales = "free_y", space = "free_y") 
+
+# If you want to compareFreedom.to.make.life.choices and score: use a scatter plot
+
+
 
 
 #The comparisons in 2019 based on the following criteria:

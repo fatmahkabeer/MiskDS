@@ -18,9 +18,9 @@ library(DT)
 library(RColorBrewer)
 
 ```
-<br />
 
-#### _In this document, I analyze a dataset that I have collected from Kaggle. This dataset illustrates the happiness in the world. I mainly focus on my analysis of the year 2019 as well as my country, Saudi Arabia._
+
+In this document, I analyze a dataset that I have collected from Kaggle. This dataset illustrates the happiness in the world. I mainly focus on my analysis of the year 2019 as well as my country, Saudi Arabia.
 
 ```{r readingDate}
 happiness_2015 <- read.csv("archive/2015.csv")
@@ -29,10 +29,13 @@ happiness_2017 <- read.csv("archive/2017.csv")
 happiness_2018 <- read.csv("archive/2018.csv")
 happiness_2019 <- read.csv("archive/2019.csv")
 ```
-<br />
+
 
 ### In 2019
-#### First of all we need to know the comparisons criterias in 2019:
+
+
+First of all we need to know the comparisons criterias in 2019:
+
 ```{r comparisonsCriteria}
 dropN <- c("Country.or.region", "Overall.rank", "Score")
 criteria <- names(happiness_2019[!(names(happiness_2019)) %in% dropN])
@@ -67,7 +70,8 @@ saddest10 <- head(saddest$Country.or.region, 10) %>%
 #### How freedom affect countries' happiness in 2019?
 
 **Plot to explain the relationship between freedom to make life choices with the level of happiness.**
-As we can see the population in the happiest countries is as showing kind of have a more degree of freedom to make life than others. 
+As we can see the population in the happiest countries is as showing kind of have a more degree of freedom to make life than others.
+
 ```{r freedomPlot}
 ggplot(happiness_2019, aes(x = Country.or.region,
                            y = Overall.rank,
@@ -135,9 +139,9 @@ Sa <- na.omit(Sa)
 pie(labels = lab, Sa, main = "Saudi Arabia")
 
 # Finland plot
-#Fin <- as.double(unlist(unname(SvsF, happiness_2019$Overall.rank == 1)))
-#Fin <- na.omit(Fin)
-#pie(labels = lab, Fin, main = "Finland")
+Fin <- as.double(unlist(unname(SvsF[happiness_2019$Country.or.region == "Finland",])))
+Fin <- na.omit(Fin)
+pie(labels = lab, Fin, main = "Finland")
 ```
 
 So what we need to improve in order to be in the first place are:
