@@ -1,6 +1,7 @@
 # MiskLearnR
 
-During the first week of our journey in learning Data Science, we learned R. 
+During the first week of our journey in learning Data Science, we learned R.
+
 *The course covered these topics:*
 - Data handling.R
 - Logical expressions.R
